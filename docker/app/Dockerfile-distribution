@@ -1,0 +1,12 @@
+ARG RUST_TAG=1.64.0
+ARG APP_SNAKE=example
+ARG APP_KEBAB=example
+FROM woc/${APP_KEBAB}-core-compiled:next as build
+
+# For usage see Dockerfile-compile
+
+FROM woc/gcr.io/distroless/cc-debian10:nonroot
+
+COPY --from=build /usr/local/cargo/bin/${APP_SNAKE} /usr/local/bin/${APP_SNAKE}
+
+CMD ["${APP_SNAKE}"]

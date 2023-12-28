@@ -1,0 +1,132 @@
+version: '3.7'
+
+networks:
+  ${ENSEMBLE_NAME}:
+    driver: overlay
+
+services:
+  axon-server:
+    image: axoniq/axonserver:${AXON_VERSION}
+    init: true
+    networks:
+    - ${ENSEMBLE_NAME}
+    ports:
+    - target: 8024
+      published: ${AXON_SERVER_PORT}
+    expose:
+    - "8024"
+    - "8124"
+    volumes:
+    -
+      type: volume
+      source: axon-data
+      target: /data
+    -
+      type: volume
+      source: axon-eventdata
+      target: /eventdata
+  ${ENSEMBLE_NAME}-command-api:
+    image: rust:${RUST_TAG}
+    working_dir: ${PROJECT}/target
+    command:
+      - "linux/debug/dendrite_example"
+    environment:
+      - "RUST_LOG=info,dendrite=debug"
+      - "RUST_BACKTRACE=1"
+    init: true
+    hostname: ${ENSEMBLE_NAME}
+    networks:
+    - ${ENSEMBLE_NAME}
+    ports:
+    - target: 8181
+      published: ${API_SERVER_PORT}
+    depends_on:
+    - axon-server
+    - proxy
+    volumes:
+      - type: bind
+        source: ${PROJECT}/target
+        target: ${PROJECT}/target
+      #${EXTRA_VOLUMES}
+  ${ENSEMBLE_NAME}-present:
+    image: ${DOCKER_REPOSITORY}/${ENSEMBLE_NAME}-present:${ENSEMBLE_IMAGE_VERSION}${PRESENT_SUFFIX}
+    networks:
+      - ${ENSEMBLE_NAME}
+    expose:
+      - "3000"
+    depends_on:
+      - axon-server
+    #${PRESENT_VOLUMES}
+  config-manager:
+    image: ${DOCKER_REPOSITORY}/config-manager:0.0.1-SNAPSHOT
+    working_dir: /opt
+    command:
+      - "./example"
+    init: true
+    networks:
+      - ${ENSEMBLE_NAME}
+    expose:
+      - "8181"
+    depends_on:
+      - axon-server
+    volumes:
+      - type: volume
+        source: ${NIX_STORE_VOLUME}
+        target: /nix/store
+  proxy:
+    image: ${DOCKER_REPOSITORY}/${ENSEMBLE_NAME}-proxy:${ENSEMBLE_IMAGE_VERSION}
+    networks:
+      - ${ENSEMBLE_NAME}
+    ports:
+      - target: 80
+        published: ${UI_SERVER_PORT}
+      - target: 8118
+        published: 8118
+    depends_on:
+      - axon-server
+#  grpc-swagger:
+#    image: ${DOCKER_REPOSITORY}/grpc-swagger
+#    networks:
+#      - ${ENSEMBLE_NAME}
+#    ports:
+#      - target: '8080'
+#        published: '8123'
+  mongodb:
+    image: mongodb/mongodb-community-server:${MONGODB_VERSION}
+    init: true
+    networks:
+      - ${ENSEMBLE_NAME}
+    ports:
+      - target: 27017
+        published: 27017
+    volumes:
+      - type: volume
+        source: mongodb-data
+        target: /data
+  inject-config:
+    image: dendrite2go/configmanager
+    init: true
+    networks:
+      - ${ENSEMBLE_NAME}
+    entrypoint:
+      - /bin/bash
+      - "-c"
+      - "${PROJECT}/bin/inject-keys.sh -v 'config-manager:8181'"
+    volumes:
+      - type: bind
+        source: ${PROJECT}/bin
+        target: ${PROJECT}/bin
+      - type: bind
+        source: ${PROJECT}/etc
+        target: ${PROJECT}/etc
+      - type: bind
+        source: ${PROJECT}/target
+        target: ${PROJECT}/target
+# ${INJECT_CONFIG_VOLUMES}
+
+volumes:
+  axon-data: {}
+  axon-eventdata: {}
+  mongodb-data: {}
+  ${NIX_STORE_VOLUME}:
+    external: true

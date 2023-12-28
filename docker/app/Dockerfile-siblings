@@ -1,0 +1,7 @@
+ARG RUST_TAG=1.64.0
+ARG APP_SNAKE=example
+FROM gcr.io/distroless/cc-debian10
+
+COPY debug/${APP_SNAKE} /usr/local/bin/${APP_SNAKE}
+
+CMD ["${APP_SNAKE}"]
