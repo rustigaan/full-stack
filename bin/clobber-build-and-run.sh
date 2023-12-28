@@ -117,6 +117,14 @@ function waitForDockerComposeReady() {
     )
 }
 
+function set-build-args() {
+  local MODULE_NAME="$1"
+  local APP_KEBAB="${ENSEMBLE_NAME}-${MODULE_NAME}"
+  local APP_SNAKE
+  APP_SNAKE="$(echo -n "${APP_KEBAB}" | tr '-' '_')"
+  DOCKER_BUILD_ARGS=(--build-arg="APP_SNAKE=${APP_SNAKE}" --build-arg="APP_KEBAB=${APP_KEBAB}" --build-arg="RUST_TAG=${RUST_TAG}")
+}
+
 function cargo-build() {
   local COMPONENT="$1"
   local DOCKER_COMPONENT="$2"
@@ -129,6 +137,7 @@ function cargo-build() {
   then
     TAG_COMPONENT="${COMPONENT}"
   fi
+  set-build-args "${TAG_COMPONENT}"
 
   if grep -E -s "${SELECT_COMPONENTS}" < <(echo "${COMPONENT}") 2>/dev/null
   then
@@ -139,10 +148,10 @@ function cargo-build() {
           "${DOCKER_FLAGS[@]}" \
           -v "${BUILD_VOLUME}:${BUILD_VOLUME}" -w "${PROJECT}/${COMPONENT}" "${DOCKER_REPOSITORY}/rust:${RUST_TAG}" \
           cargo build --target-dir '../target/linux'
-      time docker build -t "${DOCKER_REPOSITORY}/${ENSEMBLE_NAME}-${TAG_COMPONENT}:${ENSEMBLE_IMAGE_VERSION}" \
+      time docker build "${DOCKER_BUILD_ARGS[@]}" -t "${DOCKER_REPOSITORY}/${ENSEMBLE_NAME}-${TAG_COMPONENT}:${ENSEMBLE_IMAGE_VERSION}" \
                   -f "docker/${DOCKER_COMPONENT}/Dockerfile-siblings" target/linux
     else
-      time docker build -t "${DOCKER_REPOSITORY}/${ENSEMBLE_NAME}-${TAG_COMPONENT}:${ENSEMBLE_IMAGE_VERSION}" \
+      time docker build "${DOCKER_BUILD_ARGS[@]}" -t "${DOCKER_REPOSITORY}/${ENSEMBLE_NAME}-${TAG_COMPONENT}:${ENSEMBLE_IMAGE_VERSION}" \
                   -f "docker/${DOCKER_COMPONENT}/Dockerfile" .
     fi
   else
@@ -159,7 +168,7 @@ function cargo-build() {
     if "${DO_BUILD}"
     then
         info "Build rust docker image"
-        docker build -t "${DOCKER_REPOSITORY}/rust:${RUST_TAG}" docker/rust
+        docker build --build-arg="RUST_TAG=${RUST_TAG}" -t "${DOCKER_REPOSITORY}/rust:${RUST_TAG}" docker/rust
 
         if "${DO_BUILD_BACK_END}"
         then
@@ -182,10 +191,11 @@ function cargo-build() {
             info "Run npm run build"
             "${PROJECT}/present/bin/build-in-docker.sh"
             info "Build docker images for presentation layer"
-            docker build -t "${DOCKER_REPOSITORY}/${ENSEMBLE_NAME}-present:${ENSEMBLE_IMAGE_VERSION}" present
+            set-build-args 'present'
+            docker build "${DOCKER_BUILD_ARGS[@]}" -t "${DOCKER_REPOSITORY}/${ENSEMBLE_NAME}-present:${ENSEMBLE_IMAGE_VERSION}" present
             EMPTY="${PROJECT}/target/empty-build-context"
             mkdir -p "${EMPTY}"
-            docker build -t "${DOCKER_REPOSITORY}/${ENSEMBLE_NAME}-present:${ENSEMBLE_IMAGE_VERSION}-dev" -f present/Dockerfile-development "${EMPTY}"
+            docker build "${DOCKER_BUILD_ARGS[@]}" -t "${DOCKER_REPOSITORY}/${ENSEMBLE_NAME}-present:${ENSEMBLE_IMAGE_VERSION}-dev" -f present/Dockerfile-development "${EMPTY}"
         fi
 
         info "Build docker image for proxy"
