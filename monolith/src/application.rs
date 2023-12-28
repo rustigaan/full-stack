@@ -1,8 +1,6 @@
 use dendrite::auth as dendrite_auth;
 use dendrite::axon_utils::{AxonServerHandle, AxonServerHandleAsyncTrait, platform_worker_for, WorkerControl};
-use dendrite::elasticsearch::replica;
 use log::{debug, error, info, warn};
-use prost::Message;
 use std::error::Error;
 use anyhow::anyhow;
 use async_channel::{bounded, Receiver};
@@ -13,12 +11,9 @@ use tonic::{Request, Status};
 use uuid::Uuid;
 use crate::example_api::{GreeterServer, init};
 use crate::example_command::handle_commands;
-use crate::example_event::{process_events_elastic, process_events_mongo, trusted_generated};
+use crate::example_event::{process_events_mongo, trusted_generated};
 use crate::example_query::process_queries;
 use crate::proto_example::greeter_service_server::GreeterServiceServer;
-use crate::proto_example::{
-    GreetedEvent, PropertyChangedEvent, StartedRecordingEvent, StoppedRecordingEvent,
-};
 
 pub async fn application() -> Result<(), Box<dyn Error>> {
     let signal_stream = signal(SignalKind::terminate())?;
@@ -28,20 +23,12 @@ pub async fn application() -> Result<(), Box<dyn Error>> {
     axon_server_handle.spawn("Platform", platform_worker_for("Rustic"))?;
 
     axon_server_handle.spawn("Command", &handle_commands)?;
-    axon_server_handle.spawn("Elastic", &process_events_elastic)?;
     axon_server_handle.spawn("Mongo", &process_events_mongo_example)?;
-
-    let transcoders = replica::Transcoders::new()
-        .insert_ref("GreetedEvent", &GreetedEvent::decode)
-        .insert_ref("StartedRecordingEvent", &StartedRecordingEvent::decode)
-        .insert_ref("StoppedRecordingEvent", &StoppedRecordingEvent::decode)
-        .insert_ref("PropertyChangedEvent", &PropertyChangedEvent::decode);
-    axon_server_handle.spawn("Replica",replica::process_events_with(transcoders))?;
 
     trusted_generated::init()?;
     axon_server_handle.spawn("Auth",&dendrite_auth::process_events)?;
 
-    axon_server_handle.spawn("Query",&process_queries)?;
+    axon_server_handle.spawn("Query",&process_queries_mongo_example)?;
 
     info!("Starting gRPC server");
     let (tx, rx) = bounded(10);
@@ -70,6 +57,10 @@ pub async fn application() -> Result<(), Box<dyn Error>> {
 
 async fn process_events_mongo_example(axon_server_handle: AxonServerHandle, worker_control: WorkerControl) {
     process_events_mongo("mongodb://mongodb:27017/example", axon_server_handle, worker_control).await
+}
+
+async fn process_queries_mongo_example(axon_server_handle: AxonServerHandle, worker_control: WorkerControl) {
+    process_queries("mongodb://mongodb:27017/example", axon_server_handle, worker_control).await
 }
 
 async fn run_server(greeter_server: GreeterServer, worker_control: WorkerControl) -> anyhow::Result<()> {

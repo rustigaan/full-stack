@@ -43,7 +43,7 @@ pub async fn process_events_mongo(url: &str, axon_server_handle: AxonServerHandl
 
 async fn internal_process_events(url: &str, axon_server_handle: AxonServerHandle, worker_control: WorkerControl) -> Result<()> {
     let client = wait_for_mongodb(url, "Example").await?;
-    debug!("Elastic Search client: {:?}", client);
+    debug!("MongoDB client: {:?}", client);
 
     let mongo_query_model = create_mongodb_collection_query_model("example", client, "grok", "greeting");
     let query_model = ExampleQueryModel(mongo_query_model);

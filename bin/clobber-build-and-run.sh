@@ -210,10 +210,10 @@ function cargo-build() {
 
     (
         info "Remove pre-existing docker containers"
-        PRE_EXISTING="$(docker ps --filter "label=com.docker.compose.project=${ENSEMBLE_NAME}" -a --format '{{.ID}}')"
-        if [[ -n "${PRE_EXISTING}" ]]
+        read -ra PRE_EXISTING <(docker ps --filter "label=com.docker.compose.project=${ENSEMBLE_NAME}" -a --format '{{.ID}}')
+        if [[ "${#PRE_EXISTING[@]}" -gt 0 ]]
         then
-            docker rm -f ${PRE_EXISTING}
+            docker rm -f "${PRE_EXISTING[@]}"
         fi
     )
 
@@ -222,7 +222,7 @@ function cargo-build() {
       info "Remove pre-existing data volumes"
       docker volume rm -f "${ENSEMBLE_NAME}_axon-data"
       docker volume rm -f "${ENSEMBLE_NAME}_axon-eventdata"
-      docker volume rm -f "${ENSEMBLE_NAME}_elastic-search-data"
+      docker volume rm -f "${ENSEMBLE_NAME}_mongodb-data"
     fi
 )
 
