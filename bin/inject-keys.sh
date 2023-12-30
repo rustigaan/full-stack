@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 BIN="$(cd "$(dirname "$0")" ; pwd)"
 PROJECT="$(dirname "${BIN}")"
 
@@ -18,12 +20,14 @@ fi
 function is-prefix() {
   local FIRST="$1"
   local SECOND="$2"
-  local DOTS="$(echo -n  "${FIRST}" | tr -c '' '.')"
-  local CHUNK="$(echo "${SECOND}" | sed "${SED_EXT}" "s/^(${DOTS}).*$/\\1/")"
+  local DOTS
+  local CHUNK
+  DOTS="$(echo -n  "${FIRST}" | tr -c '' '.')"
+  CHUNK="$(echo "${SECOND}" | sed "${SED_EXT}" "s/^(${DOTS}).*$/\\1/")"
   test ".${CHUNK}" = ".${FIRST}"
 }
 
-if [ \! -x "/opt/configmanager" ]
+if [[ ! -x "/opt/configmanager" ]]
 then
   info "Run in docker container"
   VOLUMES=("${PROJECT}")
@@ -60,12 +64,14 @@ then
 fi
 
 AUTHORITY="$1" ; shift
+: "${AUTHORITY:=host.docker.internal:3000}"
+log "AUTHORITY=[${AUTHORITY}]"
 
-function readyness-test() {
+function readiness_test() {
   echo ">>> Properties
 actuator.test=test
 >>> End" \
-  | "/opt/configmanager" "${AUTHORITY:-host.docker.internal:3000}" 2>&1 \
+  | "/opt/configmanager" "${AUTHORITY}" 2>&1 \
   | sed \
       -e '/[Ee]rror/!d' \
       -e 's/Error.*desc = //'
@@ -73,7 +79,7 @@ actuator.test=test
 
 while true
 do
-  RESPONSE="$(readyness-test | head -1)"
+  RESPONSE="$(readiness_test | head -1)"
   log "RESPONSE: [${RESPONSE}]"
   if [[ -z "${RESPONSE}" ]]
   then
@@ -111,5 +117,5 @@ log "READY!"
     fi
 
     echo '>>> End'
-  ) | "/opt/configmanager" "${AUTHORITY:-host.docker.internal:3000}"
+  ) | "/opt/configmanager" "${AUTHORITY}"
 )

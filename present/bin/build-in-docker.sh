@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 BIN="$(cd "$(dirname "$0")" ; pwd)"
 MODULE="$(dirname "${BIN}")"
 PROJECT="$(dirname "${MODULE}")"
@@ -7,18 +9,10 @@ PROJECT="$(dirname "${MODULE}")"
 source "${PROJECT}/bin/verbose.sh"
 source "${PROJECT}/etc/settings-local.sh"
 
-function run-with-protoc() {
-  if type protoc >/dev/null 2>&1
-  then
-    (
-      cd "${BIN}"
-      "$@"
-    )
-  else
-    docker run --rm -v "${PROJECT}:${PROJECT}" -w "${BIN}" "${DOCKER_REPOSITORY}/build-protoc" "$@"
-  fi
-}
+DOCKER_CMD=(docker run --rm -v "${PROJECT}:${PROJECT}" -w "${BIN}" --user "$(id -u):$(id -g)" "${DOCKER_REPOSITORY}/build-protoc" ./generate-proto-js-package.sh "${FLAGS_INHERIT[@]}")
+log "Run with protoc in docker container: [${DOCKER_CMD[*]}]"
+"${DOCKER_CMD[@]}"
 
-run-with-protoc ./generate-proto-js-package.sh -v
-
-docker run --rm -i -v "${MODULE}:${MODULE}" -w "${MODULE}" node:latest npm run build
+DOCKER_CMD=(docker run --rm -i -v "${MODULE}:${MODULE}" -w "${MODULE}" -e 'NODE_OPTIONS=--openssl-legacy-provider' node:21-alpine npm run build)
+log "Build in docker container: [${DOCKER_CMD[*]}]"
+"${DOCKER_CMD[@]}"

@@ -5,7 +5,7 @@ FROM woc/work-on-capital-present-compiled:previous as build
 WORKDIR /usr/src/${APP_SNAKE}
 COPY present/ present/
 
-FROM woc/node:14.17.0-alpine
+FROM woc/node:21-alpine
 
 WORKDIR /usr/src/${APP_SNAKE}/present
 

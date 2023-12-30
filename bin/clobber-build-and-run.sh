@@ -187,9 +187,9 @@ function cargo-build() {
         if "${DO_BUILD_PRESENT}"
         then
             info "Run npm install"
-            "${PROJECT}/present/bin/npm-install-in-docker.sh"
+            "${PROJECT}/present/bin/npm-install-in-docker.sh" "${FLAGS_INHERIT[@]}"
             info "Run npm run build"
-            "${PROJECT}/present/bin/build-in-docker.sh"
+            "${PROJECT}/present/bin/build-in-docker.sh" "${FLAGS_INHERIT[@]}"
             info "Build docker images for presentation layer"
             set-build-args 'present'
             docker build "${DOCKER_BUILD_ARGS[@]}" -t "${DOCKER_REPOSITORY}/${ENSEMBLE_NAME}-present:${ENSEMBLE_IMAGE_VERSION}" present
@@ -209,8 +209,8 @@ function cargo-build() {
     fi
 
     (
-        info "Remove pre-existing docker containers"
-        read -ra PRE_EXISTING <(docker ps --filter "label=com.docker.compose.project=${ENSEMBLE_NAME}" -a --format '{{.ID}}')
+        info "Remove pre-existing docker containers for ${ENSEMBLE_NAME}"
+        read -ra PRE_EXISTING < <(docker ps --filter "label=com.docker.compose.project=${ENSEMBLE_NAME}" -a --format '{{.ID}}' | tr '\012' ' ' ; echo)
         if [[ "${#PRE_EXISTING[@]}" -gt 0 ]]
         then
             docker rm -f "${PRE_EXISTING[@]}"

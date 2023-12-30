@@ -3,6 +3,7 @@ version: '3.7'
 networks:
   ${ENSEMBLE_NAME}:
     driver: overlay
+    attachable: true
 
 services:
   axon-server:
