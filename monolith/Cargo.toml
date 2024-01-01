@@ -2,7 +2,7 @@
 name = "dendrite_example"
 version = "0.1.0"
 authors = ["Jeroen van Maanen"]
-edition = "2018"
+edition = "2021"
 description = "Event Sourcing and CQRS in Rust with AxonServer: Example project."
 readme = "README.md"
 homepage = "https://github.com/dendrite2go/archetype-rust-axon"
@@ -37,9 +37,10 @@ sshkeys = "^0.3"
 strum = "^0.25"
 strum_macros = "^0.25"
 tokio = { version = "^1.0", features = ["macros","rt-multi-thread","time","signal"] }
-tonic = "^0.8"
-prost = "^0.11"
+tonic = "^0.10"
+prost = "^0.12"
 uuid = { version = "^1.2", features = ["v4"] }
 
 [build-dependencies]
-tonic-build = "^0.8"
+anyhow = "1.0"
+tonic-build = "^0.10"
