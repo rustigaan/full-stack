@@ -59,7 +59,7 @@ then
       "${VOLUME_ARGS[@]}" -w "$(pwd)" \
       --entrypoint /bin/bash \
       dendrite2go/configmanager \
-      -c "${PROJECT}/bin/inject-keys.sh ${FLAGS_INHERIT[@]} '${AUTHORITY:-host.docker.internal:3000}'"
+      -c "${PROJECT}/bin/inject-keys.sh ${FLAGS_INHERIT[*]} '${AUTHORITY:-host.docker.internal:3000}'"
   exit $?
 fi
 
@@ -94,7 +94,7 @@ log "READY!"
   cd "${PROJECT}" || exit 1
   log "DIR=[$(pwd)]"
 
-  ROOT_PUBLIC_KEY="$(cat "${ROOT_PRIVATE_KEY}.pub")"
+  ## ROOT_PUBLIC_KEY="$(cat "${ROOT_PRIVATE_KEY}.pub")"
   ROOT_KEY_NAME="$(cat "${ROOT_PRIVATE_KEY}.pub" | cut -d ' ' -f 3)"
   SIGN_KEY_NAME="$(cat "${SIGN_PRIVATE_KEY}.pub" | cut -d ' ' -f 3)"
 

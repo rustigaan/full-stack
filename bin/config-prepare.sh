@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 BIN="$(cd "$(dirname "$0")" ; pwd)"
 PROJECT="$(dirname "${BIN}")"
 
@@ -18,10 +20,6 @@ fi
 (
   cd "${PROJECT}" || exit 1
   log "DIR=[$(pwd)]"
-
-  ROOT_PUBLIC_KEY="$(cat "${ROOT_PRIVATE_KEY}.pub")"
-  ROOT_KEY_NAME="$(cat "${ROOT_PRIVATE_KEY}.pub" | cut -d ' ' -f 3)"
-  SIGN_KEY_NAME="$(cat "${SIGN_PRIVATE_KEY}.pub" | cut -d ' ' -f 3)"
 
   (
     echo ">>> Secrets"
