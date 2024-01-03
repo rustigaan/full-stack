@@ -126,8 +126,11 @@ services:
 # ${INJECT_CONFIG_VOLUMES}
 
 volumes:
-  axon-data: {}
-  axon-eventdata: {}
-  mongodb-data: {}
+  axon-data:
+    name: "${ENSEMBLE_NAME}_axon_data"
+  axon-eventdata:
+    name: "${ENSEMBLE_NAME}_axon_event_data"
+  mongodb-data:
+    name: "${ENSEMBLE_NAME}_mongodb_data"
   ${NIX_STORE_VOLUME}:
     external: true
