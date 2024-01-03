@@ -6,7 +6,7 @@ BIN="$(cd "$(dirname "$0")" ; pwd)"
 PROJECT="$(dirname "${BIN}")"
 
 declare -a FLAGS_INHERIT
-source "${BIN}/verbose.sh"
+source "${BIN}/lib-verbose.sh"
 
 if [[ ".$1" = '.--help' ]]
 then

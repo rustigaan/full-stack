@@ -5,8 +5,7 @@ set -e
 BIN="$(cd "$(dirname "$0")" ; pwd)"
 PROJECT="$(dirname "${BIN}")"
 
-declare -a FLAGS_INHERIT
-source "${BIN}/verbose.sh"
+source "${BIN}/lib-verbose.sh"
 
 "${BIN}/create-local-settings.sh"
 

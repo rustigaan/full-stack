@@ -4,7 +4,7 @@ BIN="$(cd "$(dirname "$0")" ; pwd)"
 PROJECT="$(dirname "${BIN}")"
 PROTO_DIR="${PROJECT}/proto"
 
-source "${BIN}/verbose.sh"
+source "${BIN}/lib-verbose.sh"
 
 HOST='host.docker.internal'
 if [[ ".$1" = '.--host' ]]

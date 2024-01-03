@@ -16,7 +16,7 @@ PRESENT="${PROJECT}/present"
 DOCKER_REPOSITORY='dendrite2go'
 
 : ${SILENT:=true}
-. "${BIN}/verbose.sh"
+. "${BIN}/lib-verbose.sh"
 
 : ${ENSEMBLE_NAME=example}
 : ${EXTRA_VOLUMES:=}

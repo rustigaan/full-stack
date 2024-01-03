@@ -5,7 +5,7 @@ set -e
 BIN="$(cd "$(dirname "$0")" ; pwd)"
 PROJECT="$(dirname "${BIN}")"
 
-source "${BIN}/verbose.sh"
+source "${BIN}/lib-verbose.sh"
 source "${BIN}/lib-sed.sh"
 
 "${BIN}/create-local-settings.sh"
