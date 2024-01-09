@@ -1,6 +1,6 @@
 #!/usr/bin/false
 
-DOCKER_REPOSITORY='dendrite2go'
+DOCKER_REPOSITORY='rustigaan'
 ENSEMBLE_NAME=rustic
 ENSEMBLE_IMAGE_VERSION='0.0.1-SNAPSHOT'
 RUST_TAG='1.73.0'
