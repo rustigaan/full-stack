@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 BIN="$(cd "$(dirname "$0")" ; pwd)"
 PROJECT="$(dirname "${BIN}")"
 PROTO_DIR="${PROJECT}/proto"
