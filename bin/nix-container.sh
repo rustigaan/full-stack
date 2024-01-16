@@ -7,6 +7,24 @@ PROJECT="$(dirname "${BIN}")"
 
 source "${BIN}/lib-verbose.sh"
 
+if [[ ".$1" = '.--stop' ]]
+then
+  docker container rm -f nix-daemon
+  exit 0
+fi
+
+MOUNT_STORE='true'
+STORE_ROOT='/nix'
+if [[ ".$1" = '.--no-store' ]]
+then
+  MOUNT_STORE='false'
+  shift
+elif [[ ".$1" = '.--store-root' ]]
+then
+  STORE_ROOT="$2"
+  shift 2
+fi
+
 REBUILD='false'
 DOCKER_BUILD_FLAGS=()
 if [[ ".$1" = '.--rebuild' ]]
@@ -20,14 +38,20 @@ then
   docker build "${DOCKER_BUILD_FLAGS[@]}" -t 'rustigaan/nix:latest' -f "${PROJECT}/docker/nix/Dockerfile" "${PROJECT}/docker/nix"
 fi
 
-COMMAND=('bash')
-if [[ ".$1" = '.--no-bash' ]]
+DOCKER_RUN_FLAGS=('--detach')
+COMMAND=('/bin/bash' '-c' '/root/run-daemon.sh')
+if [[ ".$1" = '.--no-daemon' ]]
 then
   shift
+  DOCKER_RUN_FLAGS=()
   COMMAND=()
 fi
 
-docker volume create --driver local nix
+if "${MOUNT_STORE}"
+then
+  docker volume create --driver local nix
+  DOCKER_RUN_FLAGS+=(--mount "type=volume,source=nix,target=${STORE_ROOT}")
+fi
 
 SSH_DIR="${HOME}/.ssh"
 
@@ -43,13 +67,15 @@ then
 fi
 log "CONTAINER_WORK_DIR=[${CONTAINER_WORK_DIR}]"
 
-docker container rm nix-daemon >/dev/null 2>&1 || true
+docker container rm -f nix-daemon >/dev/null 2>&1 || true
 
-docker run --rm -ti \
-    --mount "type=volume,source=nix,target=/nix" \
+DOCKER_COMMAND=(docker run -ti --privileged \
+    "${DOCKER_RUN_FLAGS[@]}" \
     --mount "type=bind,source=${SSH_DIR},target=/home/somebody/.ssh" \
     --mount "type=bind,source=${LOCAL},target=${LOCAL}" \
     -w "${CONTAINER_WORK_DIR}" \
     --name 'nix-daemon' \
     'rustigaan/nix:latest' \
-    "${COMMAND[@]}" "$@"
+    "${COMMAND[@]}" "$@")
+log "DOCKER_COMMAND=[${DOCKER_COMMAND[*]}]"
+"${DOCKER_COMMAND[@]}"

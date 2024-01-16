@@ -7,10 +7,12 @@ COPY nix.conf /root/.config/nix/nix.conf
 COPY dot_bashrc.sh /root/.bashrc
 COPY run-daemon.sh /root/.
 ENV HOME=/root
-RUN nix profile install \
-    'nixpkgs#gnugrep' \
-    'nixpkgs#gnused' \
-    'nixpkgs#shadow'
+RUN set -ex ; \
+    nix profile install \
+      'nixpkgs#gnugrep' \
+      'nixpkgs#gnused' \
+      'nixpkgs#shadow' \
+      'nixpkgs#direnv'
 
 RUN set -e ; \
     chmod u+x,go= /root/run-daemon.sh ; \
