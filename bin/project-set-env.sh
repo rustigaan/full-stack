@@ -19,12 +19,13 @@ function remove-dirs() {
           if [[ ".${D}" = ".${R}" ]]
           then
             I="false"
-          fi
-          if "${I}"
-          then
-            echo "${D}"
+            break
           fi
         done
+        if "${I}"
+        then
+          echo "${D}"
+        fi
       done \
     | tr '\012' : \
     | sed -e 's/:$//'
@@ -36,7 +37,6 @@ function find-bin-dirs() {
   find "${TOP}" -maxdepth "${DEPTH}" \( -type d -name node_modules -prune -type f \) -o -type d -name bin \
     | sed -e 's:/bin$:/!:' \
     | sort \
-    | sed \
     | sed -e 's@/!$@/bin@'
 }
 
@@ -48,12 +48,23 @@ do
   ## echo "Removed [${B}] from [${PATH}]"
 done < <(find-bin-dirs "${WORK_AREA}" "$(($M + 1))")
 
+read -d '' -r AWK_SCRIPT <<'EOT'
+{
+  if (seen[$0] == "") {
+    seen[$0] = "+";
+    print $0;
+  }
+}
+EOT
+
 PATH="$(find-bin-dirs "${PROJECT_DIR}" "${M}" | tr '\012' ':' | sed -e 's/:$//'):${PATH}"
+PATH="$(echo "${PATH}" | tr ':' '\012' | awk "${AWK_SCRIPT}" - | tr '\012' ':')"
+PATH="${PATH%:}"
 
 if [ -f "${PROJECT_BIN}/bashrc.sh" ]
 then
   source "${PROJECT_BIN}/bashrc.sh"
 fi
 
-PS1="${PROJECT_NAME}:\W \u\$ "
+export PS1="${PROJECT_NAME}:\W \u\$ "
 echo -n -e "\033]0;${PROJECT_NAME}\a"

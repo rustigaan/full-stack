@@ -1,10 +1,14 @@
 PROFILE_BIN="/root/.nix-profile/bin"
 
+function show_project() {
+  echo "${PROJECT_NAME}"
+}
+
 if [[ "$(id -u)" -eq 0 ]]
 then
-  PS1='\h:\W # '
+  PS1='\h:($(show_project))\W # '
 else
-  PS1='\u@\h:\W $ '
+  PS1='\u@\h:($(show_project))\W $ '
 fi
 
 function path_prepend(){
