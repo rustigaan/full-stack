@@ -74,7 +74,7 @@ DOCKER_COMMAND=(docker run -ti --privileged \
     --mount "type=bind,source=${SSH_DIR},target=/home/somebody/.ssh" \
     --mount "type=bind,source=${LOCAL},target=${LOCAL}" \
     -w "${CONTAINER_WORK_DIR}" \
-    --name 'nix-daemon' \
+    --name 'nix-daemon' --hostname 'nix-daemon' \
     'rustigaan/nix:latest' \
     "${COMMAND[@]}" "$@")
 log "DOCKER_COMMAND=[${DOCKER_COMMAND[*]}]"

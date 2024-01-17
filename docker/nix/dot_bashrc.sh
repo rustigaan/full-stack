@@ -1,5 +1,12 @@
 PROFILE_BIN="/root/.nix-profile/bin"
 
+if [[ "$(id -u)" -eq 0 ]]
+then
+  PS1='\h:\W # '
+else
+  PS1='\u@\h:\W $ '
+fi
+
 function path_prepend(){
   local NEW_DIR="$1"
   local EXISTING_DIR
