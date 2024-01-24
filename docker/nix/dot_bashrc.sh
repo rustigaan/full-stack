@@ -1,7 +1,11 @@
 PROFILE_BIN="/root/.nix-profile/bin"
 
 function show_project() {
-  echo "${PROJECT_NAME}"
+  echo -n "${PROJECT_NAME}"
+  if [[ -n "${IN_NIX_SHELL}" ]]
+  then
+    echo "*"
+  fi
 }
 
 if [[ "$(id -u)" -eq 0 ]]

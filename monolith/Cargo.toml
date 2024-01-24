@@ -19,7 +19,7 @@ async-lock = "^3.0"
 async-stream = "^0.3"
 base64 = "^0.21"
 bytes = "^1.0"
-dendrite = { path = "../../dendrite/dendrite", features = ["default", "auth", "mongodb"], version = "^0.13" } # path = "../dendrite/dendrite", #
+dendrite = { features = ["default", "auth", "mongodb"], version = "^0.14" } # path = "../dendrite/dendrite", #
 env_logger = "^0.10"
 futures-core = "^0.3"
 futures-util = "^0.3"

@@ -1,4 +1,6 @@
 [workspace]
+package.name = "example"
+package.version = "0.1.0"
 resolver = "2"
 
 members = [
