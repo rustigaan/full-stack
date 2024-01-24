@@ -2,8 +2,9 @@ FROM nixpkgs/nix-flakes
 
 SHELL [ "/bin/bash", "-c" ]
 
-RUN mkdir -p /root/.config/nix
+RUN mkdir -p /root/.config/nix /root/bin
 COPY nix.conf /root/.config/nix/nix.conf
+COPY nix-install-basics.sh /root/bin/.
 COPY dot_bashrc.sh /root/.bashrc
 COPY run-daemon.sh /root/.
 ENV HOME=/root
@@ -12,7 +13,9 @@ RUN set -ex ; \
       'nixpkgs#gnugrep' \
       'nixpkgs#gnused' \
       'nixpkgs#shadow' \
-      'nixpkgs#direnv'
+      'nixpkgs#direnv' ; \
+    tar -C / -czf /root/nix-store.tar.gz nix ; \
+    touch /nix/.initialized
 
 RUN set -e ; \
     chmod u+x,go= /root/run-daemon.sh ; \

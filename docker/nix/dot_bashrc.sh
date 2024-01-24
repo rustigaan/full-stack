@@ -1,5 +1,12 @@
 PROFILE_BIN="/root/.nix-profile/bin"
 
+if type xargs >/dev/null 2>&1
+then
+  :
+else
+  /root/bin/nix-install-basics.sh
+fi
+
 function show_project() {
   echo -n "${PROJECT_NAME}"
   if [[ -n "${IN_NIX_SHELL}" ]]
