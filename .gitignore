@@ -16,6 +16,7 @@ proto_*.rs
 
 /aws
 
+/result
 /target/
 **/*.rs.bk
 

@@ -45,12 +45,20 @@
           bin = craneLib.buildPackage (commonArgs // {
             inherit cargoArtifacts;
           });
+          dockerImage = pkgs.dockerTools.buildImage {
+            name = "example_command_api";
+            tag = "latest";
+            copyToRoot = [ bin ];
+            config = {
+              Cmd = [ "${bin}/bin/dendrite_example" ];
+            };
+          };
         in
         with pkgs;
         {
           packages =
             {
-              inherit bin;
+              inherit bin dockerImage;
               default = bin;
             };
           devShells.default = mkShell {
