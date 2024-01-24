@@ -2,7 +2,6 @@
 /docker/context/home/*/[^R]*
 /data/local/
 /docker/docker-compose.yml
-/monolith/src/example_event/trusted_generated.rs
 /monolith/src/dendrite_config.rs
 /monolith/proto/
 proto_*.rs
