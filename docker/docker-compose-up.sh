@@ -14,11 +14,11 @@ PROJECT="$(dirname "${COMPOSE}")"
 PRESENT="${PROJECT}/present"
 export DOCKER_REPOSITORY='dendrite2go'
 
-: ${SILENT:=true}
+: "${SILENT:=true}"
 . "${PROJECT}/bin/lib-verbose.sh"
 
-: ${ENSEMBLE_NAME=rustic}
-: ${EXTRA_VOLUMES:=}
+: "${ENSEMBLE_NAME=rustic}"
+: "${EXTRA_VOLUMES:=}"
 source "${PROJECT}/etc/settings-local.sh"
 
 export VOLUMES=''
