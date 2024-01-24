@@ -9,7 +9,7 @@ This is a fork of the original archetype-rust-axon project with the intention to
 
 # Nix
 
-I got sidetracked and started to add building and packaging with Nix before I started on the Yew frontend. I followed the series of blog posts [Building a Rust service with Nix](https://fasterthanli.me/series/building-a-rust-service-with-nix) pretty closely.
+I got sidetracked and started to add building and packaging with Nix before I started on the Yew frontend. I followed the series of blog posts [Building a Rust service with Nix](https://fasterthanli.me/series/building-a-rust-service-with-nix) pretty closely. (The glue between Nix and Rust build tool Cargo is provided by [Crane](https://ipetkov.dev/blog/introducing-crane/).)
 
 # Stack
 
