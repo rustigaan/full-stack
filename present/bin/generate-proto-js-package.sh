@@ -6,7 +6,7 @@ BIN="$(cd "$(dirname "$0")" ; pwd)"
 MODULE="$(dirname "${BIN}")"
 PROJECT="$(dirname "${MODULE}")"
 
-source "${PROJECT}/bin/verbose.sh"
+source "${PROJECT}/bin/lib-verbose.sh"
 
 cd "${PROJECT}/proto"
 

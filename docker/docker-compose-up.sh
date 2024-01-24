@@ -12,24 +12,24 @@ export SED_EXT
 COMPOSE="$(cd "$(dirname "$0")" ; pwd)"
 PROJECT="$(dirname "${COMPOSE}")"
 PRESENT="${PROJECT}/present"
-DOCKER_REPOSITORY='dendrite2go'
+export DOCKER_REPOSITORY='dendrite2go'
 
 : ${SILENT:=true}
-. "${PROJECT}/bin/verbose.sh"
+. "${PROJECT}/bin/lib-verbose.sh"
 
 : ${ENSEMBLE_NAME=rustic}
 : ${EXTRA_VOLUMES:=}
 source "${PROJECT}/etc/settings-local.sh"
 
-VOLUMES=''
+export VOLUMES=''
 if [[ -n "${EXTRA_VOLUMES}" ]]
 then
     VOLUMES="
     volumes:${EXTRA_VOLUMES}"
 fi
 
-PRESENT_SUFFIX=''
-PRESENT_VOLUMES=' No volumes'
+export PRESENT_SUFFIX=''
+export PRESENT_VOLUMES=' No volumes'
 if [[ ".$1" = '.--dev' ]]
 then
     shift
@@ -54,7 +54,8 @@ function re-protect() {
 
 function substitute() {
     local VARIABLE="$1"
-    local VALUE="$(eval "echo \"\${${VARIABLE}}\"" | re-protect)"
+    local VALUE
+    VALUE="$(eval "echo \"\${${VARIABLE}}\"" | re-protect)"
     log "VALUE=[${VALUE}]"
     if [[ -n "$(eval "echo \"\${${VARIABLE}+true}\"")" ]]
     then

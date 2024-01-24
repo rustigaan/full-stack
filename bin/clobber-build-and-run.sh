@@ -10,7 +10,7 @@ source "${BIN}/lib-verbose.sh"
 
 if [[ ".$1" = '.--help' ]]
 then
-    echo "Usage: $(basename "$0") [ -v [ -v ] ] [ --tee <file> | --tee-time ] [ --skip-build ] [ --build-uses-siblings ] [ --back-end-only ] [ --select <module-regex> ] [ --no-clobber ] [ --dev ]" >&2
+    echo "Usage: $(basename "$0") [ -v [ -v ] ] [ --tee <file> | --tee-time ] [ --skip-build ] [ --front-end-only | --back-end-only ] [ --no-clobber ] [ --dev ]" >&2
     echo "       $(basename "$0") --help" >&2
     exit 0
 fi
@@ -35,36 +35,17 @@ then
   shift
 fi
 
-SIBLINGS='false'
-BUILD_VOLUME="${PROJECT}"
-if [[ ".$1" = '.--build-uses-siblings' ]]
-then
-  BUILD_VOLUME="$(dirname "${PROJECT}")"
-  SIBLINGS='true'
-  shift
-fi
-
 DO_BUILD_BACK_END='true'
 DO_BUILD_PRESENT='true'
 DO_BUILD_SWAGGER_IMAGE='false'
-if [[ ".$1" = '.--back-end-only' ]]
+if [[ ".$1" = '.--front-end-only' ]]
+then
+  DO_BUILD_BACK_END='false'
+  shift
+elif [[ ".$1" = '.--back-end-only' ]]
 then
   DO_BUILD_PRESENT='false'
-  DO_BUILD_SWAGGER_IMAGE='false'
   shift
-fi
-
-SELECT_COMPONENTS=''
-if [[ ".$1" = '.--select' ]]
-then
-  SELECT_COMPONENTS="$2"
-  shift 2
-fi
-if [[ -z "${SELECT_COMPONENTS}" ]]
-then
-  SELECT_COMPONENTS='^.*$'
-else
-  SELECT_COMPONENTS="^(${SELECT_COMPONENTS}).*\$"
 fi
 
 DO_CLOBBER='true'
@@ -90,7 +71,7 @@ function waitForServerReady() {
     fi
     while [[ "${N}" -gt 0 ]]
     do
-        N=$[$N - 1]
+        N=$(( N - 1 ))
         sleep 1
         if curl -sS "${URL}" >/dev/null 2>&1
         then
@@ -125,38 +106,17 @@ function set-build-args() {
   DOCKER_BUILD_ARGS=(--build-arg="APP_SNAKE=${APP_SNAKE}" --build-arg="APP_KEBAB=${APP_KEBAB}" --build-arg="RUST_TAG=${RUST_TAG}")
 }
 
-function cargo-build() {
-  local COMPONENT="$1"
-  local DOCKER_COMPONENT="$2"
-  local TAG_COMPONENT="$3"
-  if [[ -z "${DOCKER_COMPONENT}" ]]
-  then
-    DOCKER_COMPONENT="${COMPONENT}"
-  fi
-  if [[ -z "${TAG_COMPONENT}" ]]
-  then
-    TAG_COMPONENT="${COMPONENT}"
-  fi
-  set-build-args "${TAG_COMPONENT}"
-
-  if grep -E -s "${SELECT_COMPONENTS}" < <(echo "${COMPONENT}") 2>/dev/null
-  then
-    info "Cargo build: [${COMPONENT}]"
-    if "${SIBLINGS}"
+function start-nix-container() {
+  (
+    set +e
+    "${BIN}/nix-container.sh" --no-stop
+    if [[ "$?" -ge 32 ]]
     then
-      time docker run --rm -v "cargo-home:/var/cargo-home" -e "CARGO_HOME=/var/cargo-home" \
-          "${DOCKER_FLAGS[@]}" \
-          -v "${BUILD_VOLUME}:${BUILD_VOLUME}" -w "${PROJECT}/${COMPONENT}" "${DOCKER_REPOSITORY}/rust:${RUST_TAG}" \
-          cargo build --target-dir '../target/linux'
-      time docker build "${DOCKER_BUILD_ARGS[@]}" -t "${DOCKER_REPOSITORY}/${ENSEMBLE_NAME}-${TAG_COMPONENT}:${ENSEMBLE_IMAGE_VERSION}" \
-                  -f "docker/${DOCKER_COMPONENT}/Dockerfile-siblings" target/linux
+      echo 'true'
     else
-      time docker build "${DOCKER_BUILD_ARGS[@]}" -t "${DOCKER_REPOSITORY}/${ENSEMBLE_NAME}-${TAG_COMPONENT}:${ENSEMBLE_IMAGE_VERSION}" \
-                  -f "docker/${DOCKER_COMPONENT}/Dockerfile" .
+      echo 'false'
     fi
-  else
-    info "Skipped: [${COMPONENT}]"
-  fi
+  )
 }
 
 (
@@ -167,21 +127,19 @@ function cargo-build() {
 
     if "${DO_BUILD}"
     then
-        info "Build rust docker image"
-        docker build --build-arg="RUST_TAG=${RUST_TAG}" -t "${DOCKER_REPOSITORY}/rust:${RUST_TAG}" docker/rust
-
         if "${DO_BUILD_BACK_END}"
         then
             # Generate module "trusted_generated".
-            "${BIN}/generate-module-for-trusted-keys.sh" -v --module-dir 'example_event' 'monolith'
+            ## "${BIN}/generate-module-for-trusted-keys.sh" -v --module-dir 'example_event' 'monolith'
             ## "${BIN}/generate-module-for-trusted-keys.sh" -v 'upload'
 
             # Build server executables from Rust sources
             info "Build executables for the back-end"
-            DOCKER_FLAGS=()
-            ## DOCKER_FLAGS=(-e 'RUSTFLAGS=-Z macro-backtrace')
-            cargo-build monolith app core
-            ## cargo-build upload
+            KEEP_RUNNING="$(start-nix-container)"
+            nix-exec.sh -c 'nix build .#dockerImage'
+            # shellcheck disable=SC2016
+            nix-exec.sh -c 'cat "$(readlink -m result)"' | docker load
+            "${KEEP_RUNNING}" || "${BIN}/nix-container.sh" --stop
         fi
 
         if "${DO_BUILD_PRESENT}"

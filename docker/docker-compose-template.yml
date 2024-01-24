@@ -27,10 +27,8 @@ services:
       source: axon-eventdata
       target: /eventdata
   ${ENSEMBLE_NAME}-command-api:
-    image: rust:${RUST_TAG}
+    image: example_command_api:latest
     working_dir: ${PROJECT}/target
-    command:
-      - "linux/debug/dendrite_example"
     environment:
       - "RUST_LOG=info,dendrite=debug"
       - "RUST_BACKTRACE=1"
@@ -44,11 +42,7 @@ services:
     depends_on:
     - axon-server
     - proxy
-    volumes:
-      - type: bind
-        source: ${PROJECT}/target
-        target: ${PROJECT}/target
-      #${EXTRA_VOLUMES}
+    ${VOLUMES}
   ${ENSEMBLE_NAME}-present:
     image: ${DOCKER_REPOSITORY}/${ENSEMBLE_NAME}-present:${ENSEMBLE_IMAGE_VERSION}${PRESENT_SUFFIX}
     networks:
@@ -59,7 +53,7 @@ services:
       - axon-server
     #${PRESENT_VOLUMES}
   config-manager:
-    image: ${DOCKER_REPOSITORY}/config-manager:0.0.1-SNAPSHOT
+    image: dendrite2go/config-manager:0.0.1-SNAPSHOT
     working_dir: /opt
     command:
       - "./example"

@@ -13,6 +13,15 @@ then
   exit 0
 fi
 
+if [[ ".$1" = '.--no-stop' ]]
+then
+  STATUS="$(docker inspect nix-daemon --format '{{.State.Status}}' 2>/dev/null)"
+  if [[ ".${STATUS}" = '.running' ]]
+  then
+    exit 32
+  fi
+fi
+
 MOUNT_STORE='true'
 STORE_ROOT='/nix'
 if [[ ".$1" = '.--no-store' ]]
