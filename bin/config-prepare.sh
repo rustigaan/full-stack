@@ -20,6 +20,10 @@ fi
 (
   cd "${PROJECT}" || exit 1
   log "DIR=[$(pwd)]"
+  if [[ ! -d 'target' ]]
+  then
+    mkdir target
+  fi
 
   (
     echo ">>> Secrets"

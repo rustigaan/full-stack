@@ -1,9 +1,0 @@
-ARG RUST_TAG=1.64.0
-ARG APP_SNAKE=example
-ARG APP_KEBAB=example
-FROM woc/${APP_KEBAB}-present-compiled:next as build
-
-FROM nginx:1.15-alpine
-
-COPY --from=build /usr/src/${APP_SNAKE}/present/etc /etc/nginx/
-COPY --from=build /usr/src/${APP_SNAKE}/present/build/ /usr/share/nginx/html/

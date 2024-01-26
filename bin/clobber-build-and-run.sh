@@ -10,7 +10,7 @@ source "${BIN}/lib-verbose.sh"
 
 if [[ ".$1" = '.--help' ]]
 then
-    echo "Usage: $(basename "$0") [ -v [ -v ] ] [ --tee <file> | --tee-time ] [ --skip-build ] [ --front-end-only | --back-end-only ] [ --no-clobber ] [ --dev ]" >&2
+    echo "Usage: $(basename "$0") [ -v [ -v ] ] [ --tee <file> | --tee-time ] [ --skip-build ] [ --front-end-only | --back-end-only ] [ --no-clobber ]" >&2
     echo "       $(basename "$0") --help" >&2
     exit 0
 fi
@@ -98,14 +98,6 @@ function waitForDockerComposeReady() {
     )
 }
 
-function set-build-args() {
-  local MODULE_NAME="$1"
-  local APP_KEBAB="${ENSEMBLE_NAME}-${MODULE_NAME}"
-  local APP_SNAKE
-  APP_SNAKE="$(echo -n "${APP_KEBAB}" | tr '-' '_')"
-  DOCKER_BUILD_ARGS=(--build-arg="APP_SNAKE=${APP_SNAKE}" --build-arg="APP_KEBAB=${APP_KEBAB}" --build-arg="RUST_TAG=${RUST_TAG}")
-}
-
 function start-nix-container() {
   (
     set +e
@@ -144,16 +136,8 @@ function start-nix-container() {
 
         if "${DO_BUILD_PRESENT}"
         then
-            info "Run npm install"
-            "${PROJECT}/present/bin/npm-install-in-docker.sh" "${FLAGS_INHERIT[@]}"
-            info "Run npm run build"
-            "${PROJECT}/present/bin/build-in-docker.sh" "${FLAGS_INHERIT[@]}"
             info "Build docker images for presentation layer"
-            set-build-args 'present'
-            docker build "${DOCKER_BUILD_ARGS[@]}" -t "${DOCKER_REPOSITORY}/${ENSEMBLE_NAME}-present:${ENSEMBLE_IMAGE_VERSION}" present
-            EMPTY="${PROJECT}/target/empty-build-context"
-            mkdir -p "${EMPTY}"
-            docker build "${DOCKER_BUILD_ARGS[@]}" -t "${DOCKER_REPOSITORY}/${ENSEMBLE_NAME}-present:${ENSEMBLE_IMAGE_VERSION}-dev" -f present/Dockerfile-development "${EMPTY}"
+            info "TODO"
         fi
 
         info "Build docker image for proxy"
@@ -188,4 +172,4 @@ info "Prepare configuration data"
 "${BIN}/config-prepare.sh"
 
 info "Start containers"
-exec "${PROJECT}/docker/docker-compose-up.sh" "${FLAGS_INHERIT[@]}" "$@"
+exec "${PROJECT}/bin/docker-compose-up.sh" "${FLAGS_INHERIT[@]}" "$@"

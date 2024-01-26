@@ -57,15 +57,12 @@ The script `clobber-build-and-run.sh` takes the following arguments (options onl
 | `--tee <file>`          | write the output also to the given file                                                                                                                       |
 | `--skip-build`          | skip the build phase, only clobber and run                                                                                                                    |
 | `--build-uses-siblings` | expose the parent of the project to the Rust compiler, so that the build can reference sibling projects (_e.g._, for testing changes to the dendrite library) |
-| `--back-end-only`       | build only the back-end, not the front-end<br/>(most useful with `--dev`)                                                                                     |
+| `--back-end-only`       | build only the back-end, not the front-end<br/>                                                                                                               |
 | `--no-clobber`          | skip removal of the docker volumes where the data is kept                                                                                                     |
-| `--dev`                 | use the development version of the front-end<br/>React will automatically recompile changes to front-end code                                                 |
 
 The file `etc/docker-compose.yml` is recreated from `etc/docker-compose-template.yml` by script `docker-compose-up.sh` for each run of `clobber-build-and-run.sh`.
 
-The `--dev` mode deploys a `node.js` container that serves the sources directly from the `present` directory. React will dynamically recompile and reload sources when they are changed. Otherwise, an `nginx` container is deployed that serves the 'production' generated front-end.
-
-There is a separate script `bin/docker-compose-up.sh` that only regenerates the `docker-compose.yml` and invokes docker compose up. It only takes options `-v1 (once or twice)` and `--dev`.
+There is a separate script `bin/docker-compose-up.sh` that only regenerates the `docker-compose.yml` and invokes docker compose up. It only takes option `-v (once or twice)`.
 
 There is also a basic script `grpcurl-call.sh` that provides access to the gRPC API of the back-end from the command-line.
 

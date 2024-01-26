@@ -6,10 +6,6 @@
 /monolith/proto/
 proto_*.rs
 
-/present/src/grpc/
-/present/node_modules/
-/present/build/
-
 /upload/src/event_handlers/trusted_generated.rs
 /upload/src/dendrite_config.rs
 /upload/proto/

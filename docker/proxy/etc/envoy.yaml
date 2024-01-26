@@ -66,11 +66,11 @@ static_resources:
                           route:
                             host_rewrite: rustic-command-api
                             cluster: service_core
-                        - match:
-                            prefix: "/"
-                          route:
-                            host_rewrite: rustic-present
-                            cluster: service_present
+#                        - match:
+#                            prefix: "/"
+#                          route:
+#                            host_rewrite: rustic-present
+#                            cluster: service_present
                 http_filters:
                   - name: envoy.cors
                   - name: envoy.grpc_web
@@ -105,20 +105,20 @@ static_resources:
                   - name: envoy.grpc_web
                   - name: envoy.router
   clusters:
-    - name: service_present
-      connect_timeout: 0.25s
-      type: LOGICAL_DNS
-      dns_lookup_family: V4_ONLY
-      lb_policy: ROUND_ROBIN
-      load_assignment:
-        cluster_name: service_present
-        endpoints:
-          - lb_endpoints:
-              - endpoint:
-                  address:
-                    socket_address:
-                      address: rustic-present
-                      port_value: 3000
+#    - name: service_present
+#      connect_timeout: 0.25s
+#      type: LOGICAL_DNS
+#      dns_lookup_family: V4_ONLY
+#      lb_policy: ROUND_ROBIN
+#      load_assignment:
+#        cluster_name: service_present
+#        endpoints:
+#          - lb_endpoints:
+#              - endpoint:
+#                  address:
+#                    socket_address:
+#                      address: rustic-present
+#                      port_value: 3000
     - name: service_axon
       connect_timeout: 0.25s
       type: LOGICAL_DNS
