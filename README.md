@@ -43,6 +43,11 @@ Now, the project can be built with:
 $ nix build
 ```
 
+And you can open a development shell (that has cargo) with:
+```bash
+$ nix develop
+```
+
 The script `clobber-build-and-run.sh` takes the following arguments (options only work in the given order; when switched around the behavior is undefined):
 
 | option                  | description                                                                                                                                                   |
