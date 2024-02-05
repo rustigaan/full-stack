@@ -71,13 +71,13 @@ There is also a basic script `grpcurl-call.sh` that provides access to the gRPC 
 
 In alphabetic order:
 
-* [Bash](https://www.gnu.org/software/bash/manual/bash.html): The shell, or command language interpreter, for the GNU operating system — _for building and deploying_
 * [AxonServer](https://axoniq.io/product-overview/axon-server): A zero-configuration message router and event store for Axon ([docker image](https://hub.docker.com/r/axoniq/axonserver/)) — _as the Event Store_
+* [Bash](https://www.gnu.org/software/bash/manual/bash.html): The shell, or command language interpreter, for the GNU operating system — _for building and deploying_
 * [Docker compose](https://docs.docker.com/compose/): A tool for defining and running multi-container Docker applications — _for spinning up development and test environments_
-* [MongoDB](https://mongodb.com) NoSQL Document store ([docker image](https://hub.docker.com/r/mongodb/mongodb-community-server)) — _for query models (though any tokio-compatible persistence engine will do)_
 * [Envoy proxy](https://www.envoyproxy.io/): An open source edge and service proxy, designed for cloud-native applications ([docker image](https://hub.docker.com/u/envoyproxy/)) — _to decouple microservices_
+* [MongoDB](https://mongodb.com) NoSQL Document store ([docker image](https://hub.docker.com/r/mongodb/mongodb-community-server)) — _for query models (though any tokio-compatible persistence engine will do)_
 * [Nix](https://nixos.org/): Declarative builds and deployments ([docker image](https://hub.docker.com/r/nixpkgs/nix-flakes/tags)) — _for repeatable builds_
-* [React](https://reactjs.org/): A JavaScript library for building user interfaces — _for the front-end_
 * [Rust](https://www.rust-lang.org): A language empowering everyone to build reliable and efficient software ([docker image](https://hub.docker.com/_/rust)) — _for the back-end_
 * [Tokio](https://github.com/tokio-rs/tokio): A runtime for writing reliable, asynchronous, and slim applications with the Rust programming language — _as a runtime for the backend_
 * [Tonic](https://github.com/hyperium/tonic): A Rust implementation of [gRPC](https://grpc.io/) with first class support of async/await — _for the plumbing on the back-end_
+* [Yew](https://reactjs.org/): A framework for creating reliable and efficient web applications — _for the front-end_
