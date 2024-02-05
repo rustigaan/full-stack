@@ -117,6 +117,15 @@ function start-nix-container() {
 #    src/bin/generate-root-key-pair.sh
 #    src/bin/generate-module-for-trusted-keys.sh
 
+    find . -name Cargo.toml -type f -print \
+        | while read -r COMPONENT_CARGO_TOML
+          do
+            [[ ".${COMPONENT_CARGO_TOML#./}" != '.Cargo.toml' ]] || continue
+            COMPONENT_PROTO="${COMPONENT_CARGO_TOML%Cargo.toml}/proto"
+            mkdir -p "${COMPONENT_PROTO}"
+            tar -C proto -cf - . | tar -C "${COMPONENT_PROTO}" -xf -
+          done
+
     if "${DO_BUILD}"
     then
         if "${DO_BUILD_BACK_END}"
@@ -128,9 +137,13 @@ function start-nix-container() {
             # Build server executables from Rust sources
             info "Build executables for the back-end"
             KEEP_RUNNING="$(start-nix-container)"
-            nix-exec.sh -c 'nix build .#dockerImage'
-            # shellcheck disable=SC2016
-            nix-exec.sh -c 'cat "$(readlink -m result)"' | docker load
+            (
+                cd monolith
+                pwd
+                nix-exec.sh "${FLAGS_INHERIT[@]}" -c 'nix build .#dockerImage'
+                # shellcheck disable=SC2016
+                nix-exec.sh "${FLAGS_INHERIT[@]}" -c 'cat "$(readlink -m result)"' | docker load
+            )
             "${KEEP_RUNNING}" || "${BIN}/nix-container.sh" --stop
         fi
 

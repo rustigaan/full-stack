@@ -1,0 +1,20 @@
+[workspace]
+
+[package]
+edition = "2021"
+name = "example_present"
+version = "0.1.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+yew = "0.18"
+wasm-bindgen = "0.2.67"
+serde = "1"
+serde_derive = "1"
+serde_json = "1"
+anyhow = "1"
+yew-router = "0.15.0"

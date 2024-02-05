@@ -3,16 +3,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     tonic_build::configure().build_server(false)
         .message_attribute(".", serde)
         .compile(
-        &["../proto/proto_dendrite_config.proto"],
-        &["../proto"]
+        &["proto/proto_dendrite_config.proto"],
+        &["proto"]
     )?;
     tonic_build::configure()
         .message_attribute(".", serde)
         .compile(
         &[
-            "../proto/proto_example.proto",
+            "proto/proto_example.proto",
         ],
-        &["../proto"]
+        &["proto"]
     )?;
     Ok(())
 }

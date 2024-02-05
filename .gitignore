@@ -1,19 +1,13 @@
 *-local.*
-/docker/context/home/*/[^R]*
 /data/local/
 /docker/docker-compose.yml
 /monolith/src/dendrite_config.rs
-/monolith/proto/
-proto_*.rs
-
-/upload/src/event_handlers/trusted_generated.rs
-/upload/src/dendrite_config.rs
-/upload/proto/
 
 /aws
 
-/result
-/target/
+result
+target/
+/present/dist
 **/*.rs.bk
 
 /.idea/
