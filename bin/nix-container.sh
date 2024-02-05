@@ -56,6 +56,18 @@ then
   COMMAND=()
 fi
 
+while [[ "$#" -gt 0 ]] && [[ ".$1" != '.--' ]]
+do
+    DOCKER_RUN_FLAGS+=("$1")
+    shift
+done
+
+if [[ ".$1" = '.--' ]]
+then
+  shift
+fi
+log "Remaining arguments: [$*]"
+
 if "${MOUNT_STORE}"
 then
   docker volume create --driver local nix

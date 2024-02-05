@@ -25,7 +25,7 @@ The file `etc/settings-sample.sh` contains sample settings for the project. It i
 
 First, (build and) start a container that runs the nix daemon as root:
 ```bash
-$ bin/nix-container.sh
+$ bin/nix-container.sh -p 8080:8080
 ```
 
 Then, open a non-root bash prompt in the container that runs the daemon:
@@ -38,15 +38,16 @@ The bash-shell inside the nix container is configured with `direnv`, so the firs
 $ direnv allow
 ```
 
-Now, the project can be built with:
+Now, the wasm presentation can be built and served with:
 ```bash
-$ nix build
+$ cd ../present
+$ nix develop
+$ trunk serve --address 0.0.0.0
 ```
 
-And you can open a development shell (that has cargo) with:
-```bash
-$ nix develop
-```
+Now I have to figure out how to package the wasm output in a container, so that it can be deployed next to the monolithic backend in a docker-compose context.
+
+The goal is to have a single script, `clobber-build-and-run.sh`, that builds and runs the complete application (front-end, back-end, event-store, mongodb, authorization-subsystem).
 
 The script `clobber-build-and-run.sh` takes the following arguments (options only work in the given order; when switched around the behavior is undefined):
 
