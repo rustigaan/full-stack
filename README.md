@@ -40,7 +40,7 @@ $ direnv allow
 
 Now, the wasm presentation can be built and served with:
 ```bash
-$ cd ../present
+$ cd present
 $ nix develop
 $ trunk serve --address 0.0.0.0
 ```
