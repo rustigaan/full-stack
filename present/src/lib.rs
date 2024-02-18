@@ -1,92 +1,27 @@
-use serde_derive::Deserialize;
 use wasm_bindgen::prelude::wasm_bindgen;
-use yew::{Component, classes, ComponentLink, Html, html, ShouldRender, App};
-use yew::format::{Json, Nothing};
-use yew::services::fetch::{FetchTask, Request, Response};
-use yew::services::{ConsoleService, FetchService};
+use yew::prelude::*;
 
-struct TodoApp {
-    link: ComponentLink<Self>,
-    todos: Option<Vec<Todo>>,
-    fetch_task: Option<FetchTask>,
-}
-
-#[derive(Deserialize, Clone, PartialEq, Debug)]
-#[serde(rename_all = "camelCase")]
-pub struct Todo {
-    pub user_id: u64,
-    pub id: u64,
-    pub title: String,
-    pub completed: bool,
-}
-enum Msg {
-    MakeReq,
-    Resp(Result<Vec<Todo>, anyhow::Error>),
-}
-
-impl Component for TodoApp {
-    type Message = Msg;
-    type Properties = ();
-    fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
-        link.send_message(Msg::MakeReq);
-        Self {
-            link,
-            todos: None,
-            fetch_task: None,
+#[function_component]
+fn GreeterApp() -> Html {
+    let counter = use_state(|| 0);
+    let onclick = {
+        let counter = counter.clone();
+        move |_| {
+            let value = *counter + 1;
+            counter.set(value);
         }
-    }
+    };
 
-    fn update(&mut self, msg: Self::Message) -> ShouldRender {
-        match msg {
-            Msg::MakeReq => {
-                self.todos = None;
-                let req = Request::get("https://jsonplaceholder.typicode.com/todos")
-                    .body(Nothing)
-                    .expect("can make req to jsonplaceholder");
-
-                let cb = self.link.callback(
-                    |response: Response<Json<Result<Vec<Todo>, anyhow::Error>>>| {
-                        let Json(data) = response.into_body();
-                        Msg::Resp(data)
-                    },
-                );
-
-                let task = FetchService::fetch(req, cb).expect("can create task");
-                self.fetch_task = Some(task);
-                ()
-            }
-            Msg::Resp(resp) => {
-                if let Ok(data) = resp {
-                    self.todos = Some(data);
-                }
-            }
-        }
-        true
-    }
-
-    fn change(&mut self, _props: Self::Properties) -> ShouldRender {
-        false
-    }
-
-    fn view(&self) -> Html {
-        let todos = self.todos.clone();
-        let cb = self.link.callback(|_| Msg::MakeReq);
-        ConsoleService::info(&format!("render TodoApp: {:?}", todos));
-        html! {
-            <div class=classes!("todo")>
-              <div>
-                  <div class=classes!("refresh")>
-                      <button onclick=cb.clone()>
-                          { "refresh" }
-                      </button>
-                  </div>
-              </div>
-            </div>
-        }
+    html! {
+        <div>
+            <button {onclick}>{ "+1" }</button>
+            <p>{ *counter }</p>
+            <a href={"https://github.com/rustigaan/full-stack/tree/wasm"}>{"GitHub"}</a>
+        </div>
     }
 }
 
 #[wasm_bindgen(start)]
-pub fn run_app() {
-    App::<TodoApp>::new().mount_to_body();
+fn main() {
+    yew::Renderer::<GreeterApp>::new().render();
 }

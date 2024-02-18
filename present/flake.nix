@@ -2,7 +2,7 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    nixpkgs-for-wasm-bindgen.url = "github:NixOS/nixpkgs/4e6868b1aa3766ab1de169922bb3826143941973";
+    nixpkgs-for-wasm-bindgen.url = "github:NixOS/nixpkgs/654114118be7ed053139faafc404a4a6583b0692";
     rust-overlay = {
       url = "github:oxalica/rust-overlay";
       inputs = {
@@ -30,7 +30,7 @@
           rustToolchain = pkgs.rust-bin.stable.latest.default.override {
             targets = [ "wasm32-unknown-unknown" ];
           };
-          craneLib = ((crane.mkLib pkgs).overrideToolchain rustToolchain).overrideScope' (_final: _prev: {
+          craneLib = ((crane.mkLib pkgs).overrideToolchain rustToolchain).overrideScope (_final: _prev: {
             # The version of wasm-bindgen-cli needs to match the version in Cargo.lock. You
             # can unpin this if your nixpkgs commit contains the appropriate wasm-bindgen-cli version
             inherit (import nixpkgs-for-wasm-bindgen { inherit system; }) wasm-bindgen-cli;
@@ -70,9 +70,9 @@
             inherit cargoArtifacts;
             doCheck = false;
             wasm-bindgen-cli = pkgs.wasm-bindgen-cli.override {
-              version = "0.2.90";
-              hash = "sha256-X8+DVX7dmKh7BgXqP7Fp0smhup5OO8eWEhn26ODYbkQ=";
-              cargoHash = "sha256-ckJxAR20GuVGstzXzIj1M0WBFj5eJjrO2/DRMUK5dwM=";
+              version = "0.2.91";
+              hash = "sha256-f/RK6s12ItqKJWJlA2WtOXtwX4Y0qa8bq/JHlLTAS3c=";
+              cargoHash = "sha256-3vxVI0BhNz/9m59b+P2YEIrwGwlp7K3pyPKt4VqQuHE=";
             };
           });
 
@@ -117,6 +117,7 @@
             # Extra inputs can be added here; cargo and rustc are provided by default.
             packages = [
               pkgs.trunk
+              pkgs.wasm-bindgen-cli
             ] ++ buildInputs;
           };
         }
