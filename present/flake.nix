@@ -51,7 +51,7 @@
 
           buildInputs = with pkgs; [
             # Add additional build inputs here
-            ## protobuf3_20 protoc-gen-rust
+            protobuf3_20 protoc-gen-rust
           ] ++ lib.optionals pkgs.stdenv.isDarwin [
             # Additional darwin specific inputs can be set here
             libiconv
