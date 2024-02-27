@@ -7,6 +7,8 @@ This project uses the [dendrite crate](https://crates.io/crates/dendrite) ([rust
 
 This is a fork of the original archetype-rust-axon project with the intention to replace the React frontend with a frontend based on the Rusty [Yew-framework](https://crates.io/crates/yew) that can be compiled to Web-assembly.
 
+This project provides the following setup in Docker.
+
 ![communication between containers](https://raw.githubusercontent.com/rustigaan/full-stack/08337affda3969551874274eb6f1e8e9418732b9/doc/containers.png)
 
 # Nix
