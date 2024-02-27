@@ -17,9 +17,19 @@ export DOCKER_REPOSITORY='dendrite2go'
 : "${SILENT:=true}"
 source "${BIN}/lib-verbose.sh"
 
-: "${ENSEMBLE_NAME=example}"
+: "${ENSEMBLE_NAME:=example}"
 : "${EXTRA_VOLUMES:=}"
+: "${EXTRA_NETWORKS:=}"
 source "${PROJECT}/etc/settings-local.sh"
+
+if [[ ".$1" = '.--dev' ]]
+then
+  EXTRA_NETWORKS="${EXTRA_NETWORKS}
+  nix-dev:
+    external: true"
+  EXTRA_NETWORKS_FOR_PROXY="${EXTRA_NETWORKS_FOR_PROXY}
+      - nix-dev"
+fi
 
 export VOLUMES=''
 if [[ -n "${EXTRA_VOLUMES}" ]]

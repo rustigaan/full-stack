@@ -92,6 +92,7 @@ docker container rm -f nix-daemon >/dev/null 2>&1 || true
 
 DOCKER_COMMAND=(docker run -ti --privileged \
     "${DOCKER_RUN_FLAGS[@]}" \
+    --network nix-dev \
     --mount "type=bind,source=${SSH_DIR},target=/home/somebody/.ssh" \
     --mount "type=bind,source=${LOCAL},target=${LOCAL}" \
     -w "${CONTAINER_WORK_DIR}" \

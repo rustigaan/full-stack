@@ -4,6 +4,7 @@ networks:
   ${ENSEMBLE_NAME}:
     driver: overlay
     attachable: true
+# ${EXTRA_NETWORKS}
 
 services:
   axon-server:
@@ -63,6 +64,7 @@ services:
     image: ${DOCKER_REPOSITORY}/${ENSEMBLE_NAME}-proxy:${ENSEMBLE_IMAGE_VERSION}
     networks:
       - ${ENSEMBLE_NAME}
+# ${EXTRA_NETWORKS_FOR_PROXY}
     ports:
       - target: 80
         published: ${UI_SERVER_PORT}

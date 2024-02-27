@@ -10,7 +10,7 @@ source "${BIN}/lib-verbose.sh"
 
 if [[ ".$1" = '.--help' ]]
 then
-    echo "Usage: $(basename "$0") [ -v [ -v ] ] [ --tee <file> | --tee-time ] [ --skip-build ] [ --front-end-only | --back-end-only ] [ --no-clobber ]" >&2
+    echo "Usage: $(basename "$0") [ -v [ -v ] ] [ --tee <file> | --tee-time ] [ --skip-build ] [ --front-end-only | --back-end-only ] [ --no-clobber ] [ --dev ]" >&2
     echo "       $(basename "$0") --help" >&2
     exit 0
 fi
