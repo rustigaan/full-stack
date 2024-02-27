@@ -7,6 +7,8 @@ This project uses the [dendrite crate](https://crates.io/crates/dendrite) ([rust
 
 This is a fork of the original archetype-rust-axon project with the intention to replace the React frontend with a frontend based on the Rusty [Yew-framework](https://crates.io/crates/yew) that can be compiled to Web-assembly.
 
+![communication between containers](https://raw.githubusercontent.com/rustigaan/full-stack/08337affda3969551874274eb6f1e8e9418732b9/doc/containers.png)
+
 # Nix
 
 I got sidetracked and started to add building and packaging with Nix before I started on the Yew frontend. I followed the series of blog posts [Building a Rust service with Nix](https://fasterthanli.me/series/building-a-rust-service-with-nix) pretty closely. (The glue between Nix and Rust build tool Cargo is provided by [Crane](https://ipetkov.dev/blog/introducing-crane/).)
