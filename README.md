@@ -9,7 +9,7 @@ This is a fork of the original archetype-rust-axon project with the intention to
 
 This project provides the following setup in Docker.
 
-![communication between containers](https://raw.githubusercontent.com/rustigaan/full-stack/08337affda3969551874274eb6f1e8e9418732b9/doc/containers.png)
+![communication between containers](https://raw.githubusercontent.com/rustigaan/full-stack/ccab6d4c80a2794d12844930315db17e709e60d4/doc/containers.png)
 
 # Nix
 
