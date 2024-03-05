@@ -49,7 +49,7 @@ fn GreeterApp() -> Html {
                 {&*greeting}
             </div>
             <div class={"footer"}>
-                <a href={"https://github.com/rustigaan/full-stack/tree/wasm"}>{"🦀 GitHub 🦀"}</a>
+                <a href={"https://github.com/rustigaan/full-stack"}>{"🦀 GitHub 🦀"}</a>
             </div>
         </div>
     }
