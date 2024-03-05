@@ -44,7 +44,7 @@ static_resources:
                             prefix: "/"
                             headers:
                               - name: Content-Type
-                                exact_match : application/grpc-web-text
+                                exact_match : application/grpc-web+proto
                           route:
                             host_rewrite: rustic-command-api
                             cluster: service_core
@@ -71,7 +71,6 @@ static_resources:
                         - match:
                             prefix: "/"
                           route:
-                            host_rewrite: rustic-present
                             cluster: service_present
                 http_filters:
                   - name: envoy.cors
