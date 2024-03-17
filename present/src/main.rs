@@ -16,22 +16,23 @@ fn GreeterApp() -> impl IntoView {
     let oninput =
         move |input_event| { set_greeting.set(event_target_value(&input_event)); };
     let (counter, set_counter) = create_signal(0);
+    let (acknowledgement, set_acknowledgement) = create_signal("".to_string());
     let onclick =
         move |_| {
-            spawn_local(call_greeter(greeting.get().clone()));
+            spawn_local(call_greeter(greeting.get().clone(), set_acknowledgement));
             set_counter.update(|value| *value += 1);
         };
 
     view! {
         <div>
+            <h1>Rust Frontend Example with Leptos</h1>
             <div>
                 <input on:input=oninput/>
                 <button on:click=onclick>{ "+1" }</button>
-                <p>{counter}</p>
+                {" Count: "}{counter}
             </div>
-            <div>
-                {greeting}
-            </div>
+            <div>{"Greeting: ["}{greeting}{"]"}</div>
+            <div>{"Acknowledgement from back-end: ["}{acknowledgement}{"]"}</div>
             <div class={"footer"}>
                 <a href={"https://github.com/rustigaan/full-stack"} target={"_blank"}>{"🦀 GitHub 🦀"}</a>
             </div>
@@ -39,7 +40,7 @@ fn GreeterApp() -> impl IntoView {
     }
 }
 
-async fn call_greeter(greeting: String) -> () {
+async fn call_greeter(greeting: String, set_acknowledgement: WriteSignal<String>) -> () {
     info!("Call greeter");
     let greeting = Greeting { message: greeting };
     let base_url = "http://localhost:3000"; // URL of the gRPC-web server
@@ -47,7 +48,9 @@ async fn call_greeter(greeting: String) -> () {
     match greeter_client.greet(greeting).await {
         Ok(response) => {
             let ack = response.into_inner();
-            info!("Response: {ack:?}") },
+            info!("Response: {ack:?}");
+            set_acknowledgement.set(ack.message);
+        },
         Err(err) => error!("Error: {err:?}"),
     };
 }
