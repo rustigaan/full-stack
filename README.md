@@ -5,7 +5,7 @@ A proof of concept of a full stack Rust project built on the same principles as 
 An archetypal Rust project that uses AxonServer for Event Sourcing and CQRS.
 This project uses the [dendrite crate](https://crates.io/crates/dendrite) ([rustic-dendrite git repo](https://github.com/dendrite2go/rustic-dendrite)) to connect to [AxonServer](https://axoniq.io/product-overview/axon-server).
 
-This is a fork of the original archetype-rust-axon project with the intention to replace the React frontend with a frontend based on the Rusty [Yew-framework](https://crates.io/crates/yew) that can be compiled to Web-assembly.
+This is a fork of the original archetype-rust-axon project with the intention to replace the React frontend with a frontend based on the Rusty [Leptos-framework](https://book.leptos.dev/) that can be compiled to Web-assembly.
 
 This project provides the following setup in Docker.
 
@@ -13,7 +13,7 @@ This project provides the following setup in Docker.
 
 # Nix
 
-I got sidetracked and started to add building and packaging with Nix before I started on the Yew frontend. I followed the series of blog posts [Building a Rust service with Nix](https://fasterthanli.me/series/building-a-rust-service-with-nix) pretty closely. (The glue between Nix and Rust build tool Cargo is provided by [Crane](https://ipetkov.dev/blog/introducing-crane/).)
+I got sidetracked and started to add building and packaging with Nix before I started on the Leptos frontend. I followed the series of blog posts [Building a Rust service with Nix](https://fasterthanli.me/series/building-a-rust-service-with-nix) pretty closely. (The glue between Nix and Rust build tool Cargo is provided by [Crane](https://ipetkov.dev/blog/introducing-crane/).)
 
 # Usage
 
@@ -79,9 +79,9 @@ In alphabetic order:
 * [Bash](https://www.gnu.org/software/bash/manual/bash.html): The shell, or command language interpreter, for the GNU operating system — _for building and deploying_
 * [Docker compose](https://docs.docker.com/compose/): A tool for defining and running multi-container Docker applications — _for spinning up development and test environments_
 * [Envoy proxy](https://www.envoyproxy.io/): An open source edge and service proxy, designed for cloud-native applications ([docker image](https://hub.docker.com/u/envoyproxy/)) — _to decouple microservices_
+* [Leptos](https://book.leptos.dev/): A framework for creating reliable and efficient web applications — _for the front-end_
 * [MongoDB](https://mongodb.com) NoSQL Document store ([docker image](https://hub.docker.com/r/mongodb/mongodb-community-server)) — _for query models (though any tokio-compatible persistence engine will do)_
 * [Nix](https://nixos.org/): Declarative builds and deployments ([docker image](https://hub.docker.com/r/nixpkgs/nix-flakes/tags)) — _for repeatable builds_
 * [Rust](https://www.rust-lang.org): A language empowering everyone to build reliable and efficient software ([docker image](https://hub.docker.com/_/rust)) — _for the back-end_
 * [Tokio](https://github.com/tokio-rs/tokio): A runtime for writing reliable, asynchronous, and slim applications with the Rust programming language — _as a runtime for the backend_
 * [Tonic](https://github.com/hyperium/tonic): A Rust implementation of [gRPC](https://grpc.io/) with first class support of async/await — _for the plumbing on the back-end_
-* [Yew](https://reactjs.org/): A framework for creating reliable and efficient web applications — _for the front-end_
