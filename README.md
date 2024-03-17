@@ -79,7 +79,7 @@ In alphabetic order:
 * [Bash](https://www.gnu.org/software/bash/manual/bash.html): The shell, or command language interpreter, for the GNU operating system — _for building and deploying_
 * [Docker compose](https://docs.docker.com/compose/): A tool for defining and running multi-container Docker applications — _for spinning up development and test environments_
 * [Envoy proxy](https://www.envoyproxy.io/): An open source edge and service proxy, designed for cloud-native applications ([docker image](https://hub.docker.com/u/envoyproxy/)) — _to decouple microservices_
-* [Leptos](https://book.leptos.dev/): A framework for creating reliable and efficient web applications — _for the front-end_
+* [Leptos](https://book.leptos.dev/): A full-stack, isomorphic Rust web framework leveraging fine-grained reactivity to build declarative user interfaces — _for the front-end_
 * [MongoDB](https://mongodb.com) NoSQL Document store ([docker image](https://hub.docker.com/r/mongodb/mongodb-community-server)) — _for query models (though any tokio-compatible persistence engine will do)_
 * [Nix](https://nixos.org/): Declarative builds and deployments ([docker image](https://hub.docker.com/r/nixpkgs/nix-flakes/tags)) — _for repeatable builds_
 * [Rust](https://www.rust-lang.org): A language empowering everyone to build reliable and efficient software ([docker image](https://hub.docker.com/_/rust)) — _for the back-end_
